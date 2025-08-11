@@ -1,16 +1,28 @@
 const express = require("express");
-const controller = require("../controllers/userControllers")
+const carsController = require("../controllers/carControllers");
+const userController = require("../controllers/userControllers");
 const router = express.Router();
-const { userSchema } = require("../validations/validations");
 
-router.post("/", controller.create);
+//USER methods
+router.post("/users", userController.login);
 
-router.delete("/:id", controller.delete);
+router.post("/users", userController.create);
 
-router.search("/:id", validate(userSchema), controller.search);
+router.get("/users", userController.searchUser);
 
-router.put("/:id", validate(userSchema), controller.update);
+//CARS methods
 
-router.delete("/", controller.deleteByname)
+router.post("/cars", carsController.create);
+
+router.get("/cars", carsController.getOne);
+
+router.get("/cars/list", carsController.getAll);
+
+router.put("/cars/:id", carsController.update);
+
+//PEACE Methods
+
+
+
 
 module.exports = router;
