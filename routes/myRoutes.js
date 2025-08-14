@@ -1,9 +1,12 @@
 const express = require("express");
 const carsController = require("../controllers/carControllers");
 const userController = require("../controllers/userControllers");
+const peaceController = require("../controllers/peaceControllers");
 const router = express.Router();
 
 //USER methods
+router.put("/users/:id", userController.update);
+
 router.post("/users", userController.login);
 
 router.post("/users", userController.create);
@@ -22,7 +25,12 @@ router.put("/cars/:id", carsController.update);
 
 //PEACE Methods
 
+router.post("/peace", peaceController.create);
 
+router.get("/peace/:id", peaceController.getOne);     
 
+router.get("/peace", peaceController.getAll);
+
+router.put("/peace/:id", peaceController.update);
 
 module.exports = router;

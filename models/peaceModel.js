@@ -7,4 +7,4 @@ const peaceSchema = new mongoose.Schema({
     price: { type: Number, required: true },
   });
 
-  module.exports = mongoose.model("user", peaceSchema);
+  module.exports = mongoose.model("peace", peaceSchema);

@@ -66,18 +66,24 @@ exports.create = async (req, res) => {
 
     return res.status(201).json({ msg: "Usuário Criado! :) " , info});
   } catch (error) {
-    res.status(500).json({ erro: "Erro ao efetuar o Login!" });
+   return res.status(500).json({ erro: "Erro ao efetuar o Login!" });
   }
 };
 
+
 exports.update = async (req, res) => {
   const { id } = req.params;
-  const { editUser, email, pword, name } = req.body;
+  const { nUser, pword, name } = req.body;
+
+  const salt = await bcrypt.genSalt(12);
+  const passwordHash = await bcrypt.hash(pword, salt);
 
   try {
     const editProfile = await user.findByIdAndUpdate(
       id,
-      { name, email, pword, editUser },
+      { name, 
+        pword: passwordHash, 
+        nUser },
       { new: true }
     );
     res.json(editProfile);
@@ -98,13 +104,15 @@ exports.update = async (req, res) => {
       html,
     });
 
-    res
+     if (erro) {
+            return res.status(400).json({ error: "Algum erro" });
+        }
+        
+    return res
       .status(200)
       .json({ msg: "Usuário Alterado e E-mail enviado com sucesso!", info });
   } catch (error) {
-    return res
-      .status(404)
-      .json({ erro: "Não foi possível alterar os dados do seu perfil" });
+     return res.status(500).json({ error: "Erro interno" });
   }
 };
 
@@ -151,14 +159,13 @@ exports.login = async (req, res) => {
 exports.searchUser = async (req, res) => {
   try {
     const userDetails = await user.find();
-    if (!userDetails) {
-      res.send({ msg: "Não foi encontrado nenhum carro" });
+     if (!userDetails || userDetails.length === 0) {
+      return res.status(404).json({ msg: "Não foi encontrado nenhum usuário" });
     }
-    res.send({
+    return res.status(200).json({
       msg: "Estes são todos os usuários do Banco de Dados",
       allusers: userDetails,
     });
-    res.status(200).json(userDetails);
   } catch (error) {
     res.status(500).json({ msg: "Erro ao buscar os usuários", error });
   }
