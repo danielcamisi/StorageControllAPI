@@ -66,7 +66,7 @@ exports.create = async (req, res) => {
 
     return res.status(201).json({ msg: "Usuário Criado! :) " , info});
   } catch (error) {
-   return res.status(500).json({ erro: "Erro ao efetuar o Login!" });
+   return res.status(500).json({ error: "Erro ao efetuar o Login!" });
   }
 };
 
@@ -98,15 +98,12 @@ exports.update = async (req, res) => {
     });
     const info = await transportador.sendMail({
       from: process.env.SMTP_FROM || process.env.SMTP_USER,
-      to: para,
-      subject: assunto,
-      text: texto,
-      html,
+      to: email,
+      subject: "teste",
+      text: "teste",
+      html:`<h2>Olá ${nome},</h2><p>dados cadastrais alterados com sucesso!</p>`,
     });
 
-     if (erro) {
-            return res.status(400).json({ error: "Algum erro" });
-        }
         
     return res
       .status(200)

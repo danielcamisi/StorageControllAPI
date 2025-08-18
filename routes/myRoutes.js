@@ -2,6 +2,8 @@ const express = require("express");
 const carsController = require("../controllers/carControllers");
 const userController = require("../controllers/userControllers");
 const peaceController = require("../controllers/peaceControllers");
+const PictureController = require("../controllers/pictureControllers");
+const upload = require("../config/multer");
 const router = express.Router();
 
 //USER methods
@@ -32,5 +34,13 @@ router.get("/peace/:id", peaceController.getOne);
 router.get("/peace", peaceController.getAll);
 
 router.put("/peace/:id", peaceController.update);
+
+//PICTURE Methods
+
+router.post("/picture", upload.single("file"), PictureController.create);
+
+router.get("/picture", PictureController.findAll);
+
+router.delete("/picture/:id", PictureController.remove);
 
 module.exports = router;
