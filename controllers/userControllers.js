@@ -4,12 +4,9 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 
 exports.create = async (req, res) => {
-  const { name } = req.body;
-  const { nUser } = req.body;
-  const { pword } = req.body;
-  const { confirmPword } = req.body;
-  const { email } = req.body;
+console.log("Dados recebidos:", req.body);
 
+  const { name, nUser, pword, confirmPword, email } = req.body;
   if (!nUser) {
     return res
       .status(422)
@@ -47,6 +44,11 @@ exports.create = async (req, res) => {
   try {
     await newUser.save();
 
+    const para = email;
+    const assunto = "Bem-vindo ao JDM Motors!";
+    const texto = `Olá ${name}, seu cadastro foi realizado com sucesso!`;
+    const html = `<h2>Olá ${name},</h2><p>Seu cadastro foi realizado com sucesso no JDM Motors!</p>`;
+
     const transportador = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: process.env.SMTP_PORT,
@@ -56,17 +58,18 @@ exports.create = async (req, res) => {
         pass: process.env.SMTP_PASS,
       },
     });
+
     const info = await transportador.sendMail({
       from: process.env.SMTP_FROM || process.env.SMTP_USER,
       to: para,
       subject: assunto,
       text: texto,
-      html,
+      html: html,
     });
 
     return res.status(201).json({ msg: "Usuário Criado! :) " , info});
   } catch (error) {
-   return res.status(500).json({ error: "Erro ao efetuar o Login!" });
+   return res.status(500).json({ error: "Erro ao efetuar o Cadastro!" });
   }
 };
 

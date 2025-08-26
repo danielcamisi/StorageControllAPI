@@ -3,21 +3,23 @@ const carsController = require("../controllers/carControllers");
 const userController = require("../controllers/userControllers");
 const peaceController = require("../controllers/peaceControllers");
 const PictureController = require("../controllers/pictureControllers");
+const verifyToken = require("../middlewares/tokenValid");
 const upload = require("../config/multer");
 const router = express.Router();
 
 //USER methods
+
 router.put("/users/:id", userController.update);
 
-router.post("/users", userController.login);
+router.post("/users/login", userController.login);
 
-router.post("/users", userController.create);
+router.post("/users/register", userController.create);
 
 router.get("/users", userController.searchUser);
 
 //CARS methods
 
-router.post("/cars", carsController.create);
+router.post("/cars", verifyToken, carsController.create);
 
 router.get("/cars", carsController.getOne);
 
@@ -27,7 +29,7 @@ router.put("/cars/:id", carsController.update);
 
 //PEACE Methods
 
-router.post("/peace", peaceController.create);
+router.post("/peace", verifyToken, peaceController.create);
 
 router.get("/peace/:id", peaceController.getOne);     
 
