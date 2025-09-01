@@ -1,19 +1,20 @@
 const car = require("../models/postCarModel");
 
 exports.create = async (req, res) => {
-  const { carName } = req.body;
-  const { year } = req.body;
-  const { model } = req.body;
-  const { price } = req.body;
-  const { desc } = req.body;
+   if (!req.file) {
+    return res.status(400).json({ msg: "Nenhuma imagem foi enviada." });
+  }
+  const { announceName, year,details,price, desc } = req.body;
+  const img = req.file.path;
+  const userId = req.userId; 
 
-  if (!carName) {
+  if (!announceName) {
     return res.status(422).json({ msg: "verifique o campo Nome do carro" });
   }
   if (!year) {
     return res.status(422).json({ msg: "verifique o campo Ano de Fabricação" });
   }
-  if (!model) {
+  if (!details) {
     return res.status(422).json({ msg: "verifique o campo Modelo" });
   }
   if (!price) {
@@ -23,13 +24,16 @@ exports.create = async (req, res) => {
     return res.status(422).json({ msg: "verifique o campo de Descrição" });
   }
 
+  console.log("req.body:", req.body);
+  console.log("req.file:", req.file);
+
   try {
-    const newCarPost = new car({ carName, year, model, price, desc });
+    const newCarPost = new car({ announceName, year, details, price, desc, img, userId });
     await newCarPost.save();
     res.status(201).json(newCarPost);
     console.log(newCarPost);
   } catch (error) {
-    return res.status(422).json({ msg: "Erro ao anunciar o carro", error });
+    return res.status(422).json({ msg: "Erro ao anunciar o carro", error: error.message });
   }
 };
 

@@ -1,10 +1,7 @@
 const peace = require("../models/peaceModel");
 
 exports.create = async (req, res) => {
-  const { pName } = req.body;
-  const { desc } = req.body;
-  const { details } = req.body;
-  const { price } = req.body;
+  const { pName,desc,details,price,img} = req.body;
 
   if (!pName) {
     return res.status(422).json({ msg: "verifique o campo Nome do carro" });
@@ -17,6 +14,9 @@ exports.create = async (req, res) => {
   }
   if (!desc) {
     return res.status(422).json({ msg: "verifique o campo de Descrição" });
+  }
+   if (!img) {
+    return res.status(422).json({ msg: "Pelo menos uma imagem deve ser publicada" });
   }
 
   try {

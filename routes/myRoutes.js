@@ -15,11 +15,11 @@ router.post("/users/login", userController.login);
 
 router.post("/users/register", userController.create);
 
-router.get("/users", userController.searchUser);
+router.get("/users/:id", verifyToken, userController.searchUser);
 
 //CARS methods
 
-router.post("/cars", verifyToken, carsController.create);
+router.post("/cars", verifyToken,upload.single("img"), carsController.create);
 
 router.get("/cars", carsController.getOne);
 

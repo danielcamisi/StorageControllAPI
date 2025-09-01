@@ -67,7 +67,7 @@ console.log("Dados recebidos:", req.body);
       html: html,
     });
 
-    return res.status(201).json({ msg: "Usuário Criado! :) " , info});
+    return res.status(201).json({ msg: "Usuário Criado! :) " , info, userId: newUser._id });
   } catch (error) {
    return res.status(500).json({ error: "Erro ao efetuar o Cadastro!" });
   }
@@ -150,21 +150,23 @@ exports.login = async (req, res) => {
       },
       segredo
     );
-    res.status(200).json({ msg: "Autenticação Realizada", token });
+    res.status(200).json({ msg: "Autenticação Realizada", token, userId: userExists._id  });
   } catch (error) {
     res.status(500).json({ msg: error.message });
   }
 };
 
 exports.searchUser = async (req, res) => {
+  const userId = req.params.id;
+
   try {
-    const userDetails = await user.find();
-     if (!userDetails || userDetails.length === 0) {
+    const userDetails = await user.findById(userId).select("nUser name email");
+    if (!userDetails) {
       return res.status(404).json({ msg: "Não foi encontrado nenhum usuário" });
     }
     return res.status(200).json({
-      msg: "Estes são todos os usuários do Banco de Dados",
-      allusers: userDetails,
+      msg: "Usuário encontrado com sucesso",
+      user: userDetails,
     });
   } catch (error) {
     res.status(500).json({ msg: "Erro ao buscar os usuários", error });
