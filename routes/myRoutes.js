@@ -27,6 +27,10 @@ router.get("/cars/list", carsController.getAll);
 
 router.put("/cars/:id", carsController.update);
 
+router.delete("/cars/:id", carsController.delete)
+
+router.get("/cars/myannounce/:id", carsController.getOneByUserID)
+
 //PEACE Methods
 
 router.post("/peace", verifyToken, peaceController.create);
@@ -36,6 +40,8 @@ router.get("/peace/:id", peaceController.getOne);
 router.get("/peace", peaceController.getAll);
 
 router.put("/peace/:id", peaceController.update);
+
+router.delete("/cars/:id", peaceController.delete);
 
 //PICTURE Methods
 

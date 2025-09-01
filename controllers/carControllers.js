@@ -1,11 +1,12 @@
 const car = require("../models/postCarModel");
+const mongoose = require("mongoose");
 
 exports.create = async (req, res) => {
    if (!req.file) {
     return res.status(400).json({ msg: "Nenhuma imagem foi enviada." });
   }
   const { announceName, year,details,price, desc } = req.body;
-  const img = req.file.path;
+  const img = `/uploads/${req.file.filename}`;
   const userId = req.userId; 
 
   if (!announceName) {
@@ -96,10 +97,47 @@ exports.getAll = async (req, res) => {
     if(!carDetails){
       res.send({msg:"Não foi encontrado nenhum carro"})
     }
-    res.send({ msg: "A rota CARROS foi consultada. Segue os resultados: ", Allcars: carDetails });
-    res.status(200).json(carDetails)
-    console.log(carDetails);
+    res.status(200).json(carDetails);
   } catch (error) {
     res.status(500).json({msg: "Erro ao buscar os carros" , error });
+  }
+};
+
+exports.delete = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const carAnounce = await peace.findByIdAndDelete(id);
+    if (!carAnounce) {
+      return res.status(404).json({ msg: "Anúncio não encontrado" });
+    }
+
+    res.status(200).json({ msg: "Anúncio deletado com sucesso" });
+  } catch (error) {
+    return res.status(500).json({ msg: "Erro ao deletar o Anúncio", error });
+  }
+};
+
+
+exports.getOneByUserID = async (req, res) => {
+  const userId = req.params.id;
+
+  if (!userId) {
+    return res.status(400).json({ msg: "ID do usuário não informado." });
+  }
+
+  try {
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ msg: "ID do usuário inválido." });
+    }
+
+    // Aqui a correção: 'new' antes de ObjectId
+    const userObjectId = new mongoose.Types.ObjectId(userId);
+
+    const myAnnounces = await car.find({ userId: userObjectId });
+
+    return res.json(myAnnounces);
+  } catch (error) {
+    console.error("Erro no servidor:", error);
+    return res.status(500).json({ msg: "Erro encontrar os Anúncios", error });
   }
 };

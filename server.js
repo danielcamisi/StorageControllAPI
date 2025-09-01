@@ -10,13 +10,12 @@ require('./config/config');
 app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
-
+app.use('/uploads', express.static('uploads'));
+app.use('/', routes);
 
 app.get('/', (req,res)=>{
     res.status(200).send("StorageManager API - JDM cars");
 })
-
-app.use('/', routes);
 
 app.listen(port, () => {
     console.log(`Servidor rodando na porta ${port}`);
