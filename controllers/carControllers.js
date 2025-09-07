@@ -1,5 +1,5 @@
 const car = require("../models/postCarModel");
-const mongoose = require("mongoose");
+
 
 exports.create = async (req, res) => {
    if (!req.file) {
