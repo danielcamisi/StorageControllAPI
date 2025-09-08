@@ -41,7 +41,9 @@ router.get("/peace", peaceController.getAll);
 
 router.put("/peace/:id", peaceController.update);
 
-router.delete("/cars/:id", peaceController.delete);
+router.delete("/peace/:id", peaceController.delete);
+
+router.get("/peace/myannounce/:id", peaceController.getOneByIdPeace)
 
 //PICTURE Methods
 

@@ -1,4 +1,5 @@
 const peace = require("../models/peaceModel");
+const mongoose =require("mongoose")
 
 exports.create = async (req, res) => {
   const { pName,desc,details,price,img} = req.body;
@@ -90,3 +91,24 @@ exports.delete = async (req, res) => {
     return res.status(500).json({ msg: "Erro ao deletar a peça", error });
   }
 };
+
+exports.getOneByIdPeace = async (req,res)=> {
+  const userId = req.params.id;
+
+  if(!userId){
+    return res.status(400).json({msg: "ID do usuário não informado."});
+  }
+  try{
+    if(!mongoose.Types.ObjectId.isValid(userId)){
+      return res.status(400).json({msg:"ID do usuário inválido"});
+
+    }
+    const userObjectId = new mongoose.Types.ObjectId(userId);
+    const myAnnounces = await peaces.find({userId: userObjectId});
+
+    return res.json(myAnnounces);
+  }catch(error){
+    console.error("Erro no servidor", error);
+    return res.status(500).json({msg:"Erro ao encontrar os Anúncios", error})
+  }
+}

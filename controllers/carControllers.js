@@ -1,5 +1,5 @@
 const car = require("../models/postCarModel");
-
+const mongoose =require("mongoose");
 
 exports.create = async (req, res) => {
    if (!req.file) {
@@ -130,7 +130,6 @@ exports.getOneByUserID = async (req, res) => {
       return res.status(400).json({ msg: "ID do usuário inválido." });
     }
 
-    // Aqui a correção: 'new' antes de ObjectId
     const userObjectId = new mongoose.Types.ObjectId(userId);
 
     const myAnnounces = await car.find({ userId: userObjectId });
