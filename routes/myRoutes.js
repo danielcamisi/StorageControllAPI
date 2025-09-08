@@ -2,7 +2,6 @@ const express = require("express");
 const carsController = require("../controllers/carControllers");
 const userController = require("../controllers/userControllers");
 const peaceController = require("../controllers/peaceControllers");
-const PictureController = require("../controllers/pictureControllers");
 const verifyToken = require("../middlewares/tokenValid");
 const upload = require("../config/multer");
 const router = express.Router();
@@ -33,11 +32,11 @@ router.get("/cars/myannounce/:id", carsController.getOneByUserID)
 
 //PEACE Methods
 
-router.post("/peace", verifyToken, peaceController.create);
+router.post("/peace", upload.single("img"), peaceController.create);
 
 router.get("/peace/:id", peaceController.getOne);     
 
-router.get("/peace", peaceController.getAll);
+router.get("/peace/list", peaceController.getAll);
 
 router.put("/peace/:id", peaceController.update);
 
@@ -45,12 +44,5 @@ router.delete("/peace/:id", peaceController.delete);
 
 router.get("/peace/myannounce/:id", peaceController.getOneByIdPeace)
 
-//PICTURE Methods
-
-router.post("/picture", upload.single("file"), PictureController.create);
-
-router.get("/picture", PictureController.findAll);
-
-router.delete("/picture/:id", PictureController.remove);
 
 module.exports = router;

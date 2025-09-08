@@ -2,13 +2,21 @@ const peace = require("../models/peaceModel");
 const mongoose =require("mongoose")
 
 exports.create = async (req, res) => {
-  const { pName,desc,details,price,img} = req.body;
+   if (!req.file) {
+    return res.status(400).json({ msg: "Nenhuma imagem foi enviada." });
+  }
+  const { announceName, year,details,price, desc } = req.body;
+  const img = `/uploads/${req.file.filename}`;
+  const userId = req.userId; 
 
-  if (!pName) {
-    return res.status(422).json({ msg: "verifique o campo Nome do carro" });
+  if (!announceName) {
+    return res.status(422).json({ msg: "verifique o campo Nome do peça" });
+  }
+  if (!year) {
+    return res.status(422).json({ msg: "verifique o campo Ano de Fabricação" });
   }
   if (!details) {
-    return res.status(422).json({ msg: "verifique o campo Ano de Fabricação" });
+    return res.status(422).json({ msg: "verifique o campo Modelo" });
   }
   if (!price) {
     return res.status(422).json({ msg: "verifique o campo de Preço" });
@@ -16,17 +24,17 @@ exports.create = async (req, res) => {
   if (!desc) {
     return res.status(422).json({ msg: "verifique o campo de Descrição" });
   }
-   if (!img) {
-    return res.status(422).json({ msg: "Pelo menos uma imagem deve ser publicada" });
-  }
+
+  console.log("req.body:", req.body);
+  console.log("req.file:", req.file);
 
   try {
-    const newPeacePost = new car({ pName, details, price, desc });
-    await newPeacePost.save();
-    res.status(201).json(newPeacePost);
-    console.log(newPeacePost);
+    const peacePost = new peace({ announceName, year, details, price, desc, img, userId });
+    await peacePost.save();
+    res.status(201).json(peacePost);
+    console.log(peacePost);
   } catch (error) {
-    return res.status(422).json({ msg: "Erro ao anunciar a peça", error });
+    return res.status(422).json({ msg: "Erro ao anunciar esta Peça", error: error.message });
   }
 };
 
@@ -44,14 +52,25 @@ exports.getOne = async (req, res) => {
 };
 
 exports.getAll = async (req, res) => {
+  console.log("=== DEBUG getAll PEACE ===");
+  console.log("Rota /peace/list foi chamada");
+  
   try {
+    console.log("Tentando buscar peças no banco...");
     const peacePosts = await peace.find();
+    console.log("Resultado da busca:", peacePosts);
+    console.log("Quantidade encontrada:", peacePosts ? peacePosts.length : 0);
+    
     if (!peacePosts || peacePosts.length === 0) {
+      console.log("Nenhuma peça encontrada, retornando 404");
       return res.status(404).json({ msg: "Nenhuma peça encontrada" });
     }
+    
+    console.log("Retornando peças encontradas");
     res.status(200).json(peacePosts);
   } catch (error) {
-    return res.status(500).json({ msg: "Erro ao buscar as peças", error });
+    console.error("Erro no getAll:", error);
+    return res.status(500).json({ msg: "Erro ao buscar as peças", error: error.message });
   }
 };
 
@@ -78,6 +97,8 @@ exports.update = async (req, res) => {
     return res.status(422).json({ msg: "Houve um erro ao atualizar", error });
   }
 };
+
+
 exports.delete = async (req, res) => {
   const { id } = req.params;
   try {
@@ -92,23 +113,18 @@ exports.delete = async (req, res) => {
   }
 };
 
-exports.getOneByIdPeace = async (req,res)=> {
+exports.getOneByIdPeace = async (req, res) => {
   const userId = req.params.id;
+  if (!userId) return res.status(400).json({ msg: "ID do usuário não informado." });
 
-  if(!userId){
-    return res.status(400).json({msg: "ID do usuário não informado."});
-  }
-  try{
-    if(!mongoose.Types.ObjectId.isValid(userId)){
-      return res.status(400).json({msg:"ID do usuário inválido"});
-
+  try {
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ msg: "ID do usuário inválido" });
     }
     const userObjectId = new mongoose.Types.ObjectId(userId);
-    const myAnnounces = await peaces.find({userId: userObjectId});
-
+    const myAnnounces = await peace.find({ userId: userObjectId });
     return res.json(myAnnounces);
-  }catch(error){
-    console.error("Erro no servidor", error);
-    return res.status(500).json({msg:"Erro ao encontrar os Anúncios", error})
+  } catch (error) {
+    return res.status(500).json({ msg: "Erro ao encontrar os Anúncios", error });
   }
-}
+};

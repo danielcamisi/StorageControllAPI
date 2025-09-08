@@ -7,13 +7,13 @@ const verifyToken = (req, res, next) => {
     return res.status(401).json({ msg: "Acesso negado!" });
   }
 
-  const token = authHeader.split(" ")[1]; // O token estará no formato "Bearer <token>"
+  const token = authHeader.split(" ")[1]; 
 
   try {
     const secret = process.env.SECRET;
-    const decoded = jwt.verify(token, secret); // Verifica o token
-    req.userId = decoded.id; // Salva o ID do usuário no objeto `req`
-    next(); // Permite que a requisição continue
+    const decoded = jwt.verify(token, secret); 
+    req.userId = decoded.id; 
+    next(); 
   } catch (error) {
     return res.status(400).json({ msg: "Token inválido!" });
   }

@@ -17,4 +17,4 @@ const userSchema = Joi.object({
     })
 });
 
-module.exports = {carSchema};
+module.exports = {userSchema};
